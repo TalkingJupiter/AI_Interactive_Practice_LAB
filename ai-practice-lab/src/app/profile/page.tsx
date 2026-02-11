@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "../../../lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
@@ -21,7 +21,7 @@ export default function ProfilePage() {
       <h1 className="text-3xl font-bold">Profile</h1>
       <div className="rounded-xl border bg-white p-6 shadow-sm">
         <div className="text-sm text-gray-600">Signed in as</div>
-        <div className="font-medium">{email ?? "..."}</div>
+        <div className="font-medium text-black">{email ?? "..."}</div>
 
         <div className="mt-6 text-sm text-gray-600">
           Next: show attempts count, accuracy, last attempt time.

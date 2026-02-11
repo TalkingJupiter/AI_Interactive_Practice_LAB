@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 type CaseStudy = {
@@ -16,6 +16,7 @@ type CaseStudy = {
 export default function HomePage() {
   const router = useRouter();
   const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
+  const [level, setLevel] = useState<0 | 1 | 2>(0);
   const [answer, setAnswer] = useState("");
   const [status, setStatus] = useState<string | null>(null);
 
@@ -28,28 +29,20 @@ export default function HomePage() {
 
   useEffect(() => {
     async function load() {
-      // For now: call your existing API test route, then we’ll add a real “get case” endpoint
-      const res = await fetch("/api/test-db", { cache: "no-store" });
+      setStatus(null);
+      setCaseStudy(null);
+
+      const res = await fetch(`/api/get-case?level=${level}`, {cache: "no-store"});
       const json = await res.json();
 
-      if (!json.success || !json.data?.length) {
-        setStatus(json.error ?? "No case studies found in DB.");
-        return;
+      if(!res.ok){
+        setStatus(json.error ?? "Failed to load case study");
       }
 
-      const row = json.data[0];
-      setCaseStudy({
-        id: row.id,
-        category: row.category,
-        level: row.level,
-        title: row.title,
-        case_text: row.case_text,
-        questions: row.questions ?? [],
-      });
+      setCaseStudy(json.caseStudy)
     }
-
     load().catch((e) => setStatus(e.message));
-  }, []);
+  }, [level]);
 
   async function submitAnswer() {
     setStatus("Saved locally (LLM evaluate comes next).");
@@ -63,13 +56,28 @@ export default function HomePage() {
         Read the case, answer the questions, and receive guided feedback.
       </p>
 
-      {status && <div className="rounded-lg border bg-white p-4 text-sm">{status}</div>}
+      <div className="flex gap-2">
+        {[
+          {v: 0 as const, label: "Easy"},
+          {v: 1 as const, label: "Medium"},
+          {v: 2 as const, label: "Hard"}
+        ].map((x) => (
+          <button
+            key={x.v}
+            onClick={() => setLevel(x.v)}
+            className={`rounded-lg border px-3 py-2 text-sm ${level === x.v ? "bg-black text-white" : " text-black bg-white"}`} >
+              {x.label}
+            </button>
+        ))
+        }
+      </div>
+      {status && <div className="rounded-lg border bg-white p-4 text-sm text-black">{status}</div>}
 
       {caseStudy && (
         <div className="rounded-xl border bg-white p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">{caseStudy.title}</h2>
-            <span className="text-xs rounded-full bg-gray-100 px-3 py-1">
+            <h2 className="text-xl font-semibold text-black">{caseStudy.title}</h2>
+            <span className="text-xs rounded-full bg-black px-3 py-1">
               {caseStudy.category} • level {caseStudy.level}
             </span>
           </div>
@@ -77,7 +85,7 @@ export default function HomePage() {
           <p className="text-gray-800">{caseStudy.case_text}</p>
 
           <div className="space-y-2">
-            <h3 className="font-medium">Questions</h3>
+            <h3 className="font-medium text-black">Questions</h3>
             <ul className="list-disc pl-6 text-gray-700">
               {caseStudy.questions.map((q, i) => (
                 <li key={i}>{q}</li>
@@ -86,7 +94,7 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-medium">Your Answer</h3>
+            <h3 className="font-medium text-black">Your Answer</h3>
             <textarea
               className="w-full rounded-lg border p-3 min-h-[140px]"
               value={answer}
