@@ -1,0 +1,45 @@
+.DS_Store
+llm/*
+.llama-server.log
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+ai-practice-lab/node_modules
+ai-practice-lab/.pnp
+ai-practice-lab.pnp.*
+ai-practice-lab.yarn/*
+ai-practice-lab!.yarn/patches
+ai-practice-lab!.yarn/plugins
+ai-practice-lab!.yarn/releases
+ai-practice-lab!.yarn/versions
+
+# testing
+ai-practice-lab/coverage
+
+# next.js
+ai-practice-lab/.next/
+ai-practice-lab/out/
+
+# production
+ai-practice-lab/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
