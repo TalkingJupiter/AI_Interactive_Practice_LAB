@@ -80,7 +80,7 @@ async function callLLM(promt:string) {
 
 function safeJsonParse(raw: String){
     const start = raw.indexOf("{");
-    const end = raw.indexOf("}");
+    const end = raw.lastIndexOf("}");
     if(start === -1 || end === -1 || end <=start) throw new Error("No JSON object found");
     const sliced = raw.slice(start, end +1 )
     return JSON.parse(sliced);
@@ -125,7 +125,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             //compare by reusing the same RPC to find closest matches to candidate
             const{data: close, error:cErr} = await supabase.rpc("match_case_studies", {
-                query_embedding: queryEmbedding,
+                query_embedding: candEmbedding,
                 match_category: category,
                 match_level: level,
                 match_count: 10,
