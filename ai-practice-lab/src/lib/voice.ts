@@ -206,7 +206,86 @@ export function startListening(options: ListenOptions) {
   };
 
   currentRecognition = recognition;
+  recognition.onaudiostart = () => {
+    console.log("[speech] onaudiostart");
+  };
 
+  recognition.onaudioend = () => {
+    console.log("[speech] onaudioend");
+  };
+
+  recognition.onsoundstart = () => {
+    console.log("[speech] onsoundstart");
+  };
+
+  recognition.onsoundend = () => {
+    console.log("[speech] onsoundend");
+  };
+
+  recognition.onspeechstart = () => {
+    console.log("[speech] onspeechstart");
+  };
+
+  recognition.onspeechend = () => {
+    console.log("[speech] onspeechend");
+  };
+
+  recognition.onnomatch = () => {
+    console.log("[speech] onnomatch");
+  };
+
+  recognition.onstart = () => {
+    console.log("[speech] onstart");
+    listening = true;
+    options.onStart?.();
+  };
+
+  recognition.onresult = (event) => {
+    console.log("[speech] onresult", event);
+    let finalTranscript = "";
+    let interimTranscript = "";
+
+    for (let index = 0; index < event.results.length; index += 1) {
+      const result = event.results[index];
+      const transcript = result[0]?.transcript ?? "";
+
+      if (result.isFinal) {
+        finalTranscript += transcript;
+      } else {
+        interimTranscript += transcript;
+      }
+    }
+
+    const normalizedFinal = normalizeSpaces(finalTranscript);
+    const normalizedInterim = normalizeSpaces(interimTranscript);
+    const transcript = normalizeSpaces(
+      `${normalizedFinal} ${normalizedInterim}`
+    );
+
+    const isFinal = event.results[event.resultIndex]?.isFinal ?? false;
+
+    options.onResult({
+      transcript,
+      finalTranscript: normalizedFinal,
+      interimTranscript: normalizedInterim,
+      isFinal,
+      event,
+    });
+  };
+
+  recognition.onerror = (event) => {
+    console.log("[speech] onerror", event.error, event.message, event);
+    options.onError?.(event);
+  };
+
+  recognition.onend = () => {
+    console.log("[speech] onend");
+    listening = false;
+    if (currentRecognition === recognition) {
+      currentRecognition = null;
+    }
+    options.onEnd?.();
+  };
   try {
     recognition.start();
     return true;
