@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
-import { canSpeak, speak, stopSpeaking } from "../lib/voice";
+import { canSpeak, speak, stopSpeaking, canListen, startListening, stopListening } from "../lib/voice";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
@@ -68,6 +68,33 @@ function IconSpeakerOff() {
   );
 }
 
+function IconMic() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className="w-4 h-4"
+    >
+      <path d="M10 2.5A2.5 2.5 0 0 0 7.5 5v5a2.5 2.5 0 0 0 5 0V5A2.5 2.5 0 0 0 10 2.5Z" />
+      <path d="M5.75 9.25a.75.75 0 0 1 .75.75 3.5 3.5 0 1 0 7 0 .75.75 0 0 1 1.5 0A5 5 0 0 1 10.75 15v1.75h2a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5h2V15A5 5 0 0 1 5 10a.75.75 0 0 1 .75-.75Z" />
+    </svg>
+  );
+}
+
+function IconMicOff() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className="w-4 h-4"
+    >
+      <path d="M12.5 10V8.56l1.47 1.47c.02.44-.02.87-.14 1.28a.75.75 0 0 0 1.44.42c.19-.66.25-1.35.18-2.05l1.01 1.01a.75.75 0 1 0 1.06-1.06l-12-12A.75.75 0 0 0 4.46 3.7L7.5 6.73V10a2.5 2.5 0 0 0 4.02 1.98l1.1 1.1A3.5 3.5 0 0 1 6.5 10a.75.75 0 0 0-1.5 0A5 5 0 0 0 9.25 15v1.75h-2a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5h-2V15c1.17-.1 2.25-.61 3.08-1.4l1.62 1.62a.75.75 0 1 0 1.06-1.06l-12-12A.75.75 0 1 0 3.45 3.22L6 5.77V10a4 4 0 0 0 6.73 2.93l-1.16-1.16A2.48 2.48 0 0 1 10 12.5 2.5 2.5 0 0 1 7.5 10V7.27l5 5V10Z" />
+    </svg>
+  );
+}
+
 
 export default function HomePage() {
   const router = useRouter();
@@ -110,6 +137,9 @@ export default function HomePage() {
   const [isSpeakingState, setIsSpeakingState] = useState(false);
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
 
+  const [listenSupported, setListenSupported] = useState(false);
+  const [isListeningState, setIsListeningState] = useState(false);
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const scrollToBottom = () =>
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -117,6 +147,7 @@ export default function HomePage() {
 
   useEffect(() => {
     setSpeechSupported(canSpeak());
+    setListenSupported(canListen());
   }, []);
 
   // Require login + capture user_id
@@ -587,6 +618,40 @@ export default function HomePage() {
     })
   }
 
+  function handleMicClick(){
+    if(!listenSupported || !caseStudy || isThinking) return;
+
+    if(isListeningState){
+      stopListening();
+      setIsListeningState(false);
+      return;
+    }
+
+    startListening({
+      lang: "en-US",
+      continuous: true,
+      interimResults: true,
+      onStart: () => {
+        setIsListeningState(true);
+        setStatus("Listening...");
+      },
+      onResult: ({transcript}) => {
+        setAnswer(transcript);
+      }, 
+      onEnd: () => {
+        setIsListeningState(false);
+        setStatus(null);
+      },
+      onError: (error) => {
+        setIsListeningState(false);
+        const message = error instanceof Error ? error.message : `${error.error}${error.message ? `: ${error.message}` : ""}`;
+      
+        setStatus(message || "Speech recognition failed.")
+      }
+
+    });
+  }
+
   return (
     <main className="min-h-screen bg-[#121212] text-neutral-100">
       {/* Top bar */}
@@ -796,6 +861,17 @@ export default function HomePage() {
                 }
               }}
             />
+            {listenSupported && (
+              <button
+                type="button"
+                onClick={handleMicClick}
+                className="rounded-2xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-sm text-neutral-200 hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!caseStudy || isThinking}
+                title={isListeningState ? "Stop Listening" : "Start voice input"}
+                aria-label={isListeningState ? "Stop Listening" : "Start voice input"}
+              ></button>
+            )}
+
             <button
               onClick={submitAnswer}
               className="rounded-2xl bg-neutral-100 text-neutral-900 px-4 py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
