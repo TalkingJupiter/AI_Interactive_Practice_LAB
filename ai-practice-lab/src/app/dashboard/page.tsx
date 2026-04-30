@@ -196,14 +196,14 @@ export default function DashboardPage() {
     <main className="mx-auto max-w-4xl p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm text-black">
           Your attempt history and analytics
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-xl border bg-white p-4 shadow-sm">
-          <label className="mb-2 block text-sm font-medium text-gray-700">
+        <div className="rounded-xl border bg-white p-4 shadow-sm text-black">
+          <label className="mb-2 block text-sm font-medium text-black">
             Filter by category
           </label>
           <select
@@ -219,8 +219,8 @@ export default function DashboardPage() {
           </select>
         </div>
 
-        <div className="rounded-xl border bg-white p-4 shadow-sm">
-          <label className="mb-2 block text-sm font-medium text-gray-700">
+        <div className="rounded-xl border bg-white p-4 shadow-sm text-black">
+          <label className="mb-2 block text-sm font-medium text-black">
             Filter by level
           </label>
           <select
@@ -238,7 +238,7 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-xl border bg-white p-5 shadow-sm">
-          <div className="text-sm text-gray-600">Total Attempts</div>
+          <div className="text-sm text-black">Total Attempts</div>
           <div className="mt-2 text-3xl font-bold text-black">
             {stats.totalAttempts}
           </div>
@@ -270,7 +270,7 @@ export default function DashboardPage() {
         <h2 className="text-xl font-bold text-black">Attempts</h2>
 
         {filteredAttempts.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-600">No attempts found.</p>
+          <p className="mt-4 text-sm text-black">No attempts found.</p>
         ) : (
           <div className="mt-4 space-y-3">
             {filteredAttempts.map((attempt) => (
@@ -281,14 +281,14 @@ export default function DashboardPage() {
                 <div>
                   <div className="font-semibold text-black">{attempt.title}</div>
                   <div className="text-sm text-gray-600">
-                    {attempt.category} • {levelLabel(attempt.level)}
+                    {attempt.category} - {levelLabel(attempt.level)}
                   </div>
                   <div className="text-xs text-gray-500">
                     {new Date(attempt.created_at).toLocaleString()}
                   </div>
                 </div>
 
-                <div className="flex gap-3 text-sm">
+                <div className="flex gap-3 text-sm text-black">
                   <span className="rounded-md border px-3 py-1">
                     Score: {attempt.score ?? "-"}
                   </span>

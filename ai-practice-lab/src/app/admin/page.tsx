@@ -207,7 +207,7 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-4xl p-6">
+      <main className="mx-auto max-w-4xl p-6 text-black ">
         <div className="rounded-xl border bg-white p-6 shadow-sm">
           Loading admin dashboard...
         </div>
@@ -347,7 +347,7 @@ export default function AdminPage() {
             <h3 className="font-bold text-black">Recent Attempts</h3>
 
             {selectedUserAttempts.length === 0 ? (
-              <p className="mt-3 text-sm text-gray-600">
+              <p className="mt-3 text-sm text-black">
                 This user has no attempts yet.
               </p>
             ) : (
@@ -362,14 +362,14 @@ export default function AdminPage() {
                         {attempt.title}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {attempt.category} • {levelLabel(attempt.level)}
+                        {attempt.category} - {levelLabel(attempt.level)}
                       </div>
                       <div className="text-xs text-gray-500">
                         {new Date(attempt.created_at).toLocaleString()}
                       </div>
                     </div>
 
-                    <div className="flex gap-3 text-sm">
+                    <div className="flex gap-3 text-sm text-black">
                       <span className="rounded-md border px-3 py-1">
                         Score: {attempt.score ?? "-"}
                       </span>
