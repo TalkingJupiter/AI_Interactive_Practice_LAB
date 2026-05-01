@@ -657,7 +657,7 @@ export default function HomePage() {
       <div className="sticky top-0 z-10 border-b border-neutral-800 bg-inherit backdrop-blur">
         <div className="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between gap-4">
           <div className="flex flex-col">
-            <h1 className="text-lg font-semibold text-[#2c3e50]">Case Study Practice</h1>
+            <h1 className="text-lg font-semibold text-white">Case Study Practice</h1>
             <p className="text-xs text-neutral-400">Chat-style guided practice</p>
           </div>
 
@@ -748,23 +748,23 @@ export default function HomePage() {
 
       {/* Chat area */}
       <div className="mx-auto max-w-4xl px-4 py-6">
-        {status && (
+        {/* {status && (
           <div className="mb-4 rounded-xl border border-neutral-800 bg-neutral-900/40 p-3 text-xs text-neutral-200">
             {status}
           </div>
-        )}
+        )} */}
 
-        {!caseStudy && selectionComplete && !isThinking && (
+        {/* {!caseStudy && selectionComplete && !isThinking && (
           <div className="mb-4 rounded-xl border border-neutral-800 bg-neutral-900/20 p-3 text-xs text-neutral-300">
             Ready. Click <b>Fetch case</b> to begin.
           </div>
-        )}
+        )} */}
 
-        {!caseStudy && !selectionComplete && !isThinking && (
+        {/* {!caseStudy && !selectionComplete && !isThinking && (
           <div className="mb-4 rounded-xl border border-neutral-800 bg-neutral-900/20 p-3 text-xs text-neutral-300">
             Select a <b>category</b> and <b>difficulty</b> first.
           </div>
-        )}
+        )} */}
 
         <div className="space-y-4">
           {messages.map((m) => {

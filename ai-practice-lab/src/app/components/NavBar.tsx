@@ -93,18 +93,18 @@ export default function NavBar() {
                         {isDyslexicMode ? "Standard" : "Dyslexic"}
                     </button>
 
-                    <Link href="/profile" className="hover:underline">
+                    {/* <Link href="/profile" className="hover:underline">
                         Profile
-                    </Link>
+                    </Link> */}
 
-                    {/* NEW: Admin button */}
+                    {/*Admin button */}
                     {isAdmin && (
                         <Link href="/admin" className="hover:underline text-yellow-300">
                             Admin
                         </Link>
                     )}
 
-                    {/* Optional: Dashboard button */}
+                    {/*Dashboard button */}
                     <Link href="/dashboard" className="hover:underline">
                         Dashboard
                     </Link>

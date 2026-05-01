@@ -34,7 +34,7 @@ function buildEvalPrompt(opts: {
 
   return `
 You are an AI tutor evaluating a student's reasoning for an educational practice app.
-This is NOT medical advice.
+This is NOT medical advice. Make a honest grading.
 
 CRITICAL RULES:
 - Return ONLY valid JSON. No markdown. No extra words.
@@ -74,6 +74,7 @@ Scoring guidance:
 
 - If student gets lower than 89 explain what can they improve but accept it correct
 - If student does not answer the questions medically, asks for advices or their answers are irrevelant to the question they must receive 0.
+- After you score the student re-check your self any answer that is unrelated to the answer must receive 0.
 
 Remember: if wrong, guide without giving away the answer.
 `.trim();

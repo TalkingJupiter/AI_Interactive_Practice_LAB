@@ -154,7 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (nErr) throw nErr;
 
-        const SIM_THRESHOLD = 0.88;
+        const SIM_THRESHOLD = 0.80;
         const MAX_TRIES = 3;
 
         for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
