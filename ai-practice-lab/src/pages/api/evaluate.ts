@@ -42,6 +42,7 @@ CRITICAL RULES:
 - If the student is wrong, DO NOT reveal the correct answer directly.
 - Do not name specific "final answers" explicitly. Use hints and guidance instead.
 - Keep explanation short (1-2 sentences).
+- Act like an actual teacher if the answer is irrelevent give a real rating.
 
 Case Title: ${caseStudy.title}
 Category: ${caseStudy.category}
@@ -69,13 +70,18 @@ Scoring guidance:
 - 90-100: correct and well-explained
 - 60-89: mostly correct but missing reasoning
 - 30-59: partially correct with major gaps
-- 0-29: incorrect reasoning
+- 0-29: irrevelant response or major mistake or one word explanations.
+
+- If student gets lower than 89 explain what can they improve but accept it correct
+- If student does not answer the questions medically, asks for advices or their answers are irrevelant to the question they must receive 0.
 
 Remember: if wrong, guide without giving away the answer.
 `.trim();
 }
 
-async function callLLM(prompt: string) {
+
+// FUNCTION FOR IF WE NEED TO CALL OPENROUTER
+async function callLLM_router(prompt: string) {
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -92,6 +98,32 @@ async function callLLM(prompt: string) {
       stop: ["```"],
     }),
   });
+
+  const json = await res.json();
+  console.log("FULL OPENROUTER RESPONSE:", JSON.stringify(json));
+  const choice = json?.choices?.[0];
+  const text = choice?.message?.content
+    ?? choice?.message?.reasoning
+    ?? "";
+  console.log("RAW LLM RESPONSE:", text);
+  return text;
+
+}
+
+
+async function callLLM(promt:string) {
+    const base = process.env.LLM_BASE_URL;
+    const res = await fetch(`${base}/chat/completions`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            model: process.env.LLM_MODEL,
+            messages: [{role: "user", content: promt}],
+            temperature: 0.3,
+            max_tokens: 650,
+            stop: ["<|im_end|>", "</s>", "```"],
+        }),
+    });
 
   const json = await res.json();
   console.log("FULL OPENROUTER RESPONSE:", JSON.stringify(json));

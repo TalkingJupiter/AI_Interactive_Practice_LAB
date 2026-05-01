@@ -65,7 +65,9 @@ function buildRagPrompt(category: string, level: number, neighbors: any[], attem
     `;
 }
 
-async function callLLM(prompt: string) {
+
+// FUNCTION FOR IF WE NEED TO CALL OPENROUTER
+async function callLLM_router(prompt: string) {
     const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -92,6 +94,25 @@ async function callLLM(prompt: string) {
         ?? choice?.message?.reasoning
         ?? "";
     console.log("RAW LLM RESPONSE:", text);
+    return text;
+}
+
+async function callLLM(promt:string) {
+    const base = process.env.LLM_BASE_URL;
+    const r = await fetch(`${base}/chat/completions`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            model: process.env.LLM_MODEL,
+            messages: [{role: "user", content: promt}],
+            temperature: 0.3,
+            max_tokens: 650,
+            stop: ["<|im_end|>", "</s>", "```"],
+        }),
+    });
+
+    const j = await r.json();
+    const text = j?.choices?.[0].message?.content ?? "";
     return text;
 }
 
